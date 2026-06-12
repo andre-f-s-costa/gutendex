@@ -315,14 +315,21 @@ class Command(BaseCommand):
                 os.makedirs(DOWNLOAD_PATH)
             with open(os.devnull, 'w') as null:
                 call(
-                    ['tar', 'fjvx', DOWNLOAD_PATH, '-C', TEMP_PATH],
-                    stdout=null,
-                    stderr=null
+                    ['tar', '-xjf', DOWNLOAD_PATH, '-C', TEMP_PATH]
                 )
 
             log('  Detecting stale directories...')
             if not os.path.exists(MOVE_TARGET_PATH):
                 os.makedirs(MOVE_TARGET_PATH)
+
+            if not os.path.exists(MOVE_SOURCE_PATH):
+                os.makedirs(MOVE_SOURCE_PATH)
+            
+            if not os.path.exists(MOVE_SOURCE_PATH):
+                raise CommandError(
+                    f'Catalog extraction failed. Missing path: {MOVE_SOURCE_PATH}'
+                )
+
             new_directory_set = get_directory_set(MOVE_SOURCE_PATH)
             old_directory_set = get_directory_set(MOVE_TARGET_PATH)
             stale_directory_set = old_directory_set - new_directory_set
